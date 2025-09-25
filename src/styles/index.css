@@ -1,0 +1,14 @@
+@import 'tailwindcss';
+@import './font.css';
+
+@theme {
+}
+
+body {
+	font-family: 'Rubik';
+}
+
+#root {
+	height: 100vh;
+	overflow: hidden;
+}
