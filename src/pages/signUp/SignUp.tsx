@@ -1,12 +1,12 @@
-import DarkVeil from '../shared/DarkVeils'
-import { AuthForm } from '@widgets/authForm/AuthForm'
+import DarkVeil from '@shared/DarkVeils'
+import { SignUpForm } from '@widgets/authForm/SignUpForm'
 
-export const Auth = () => {
+export const SignUp = () => {
 	return (
 		<>
 			<div className="h-screen w-screen relative overflow-hidden bg-[#141514]">
 				<div className="w-full h-full absolute z-10 flex items-center justify-center text-white">
-					<AuthForm />
+					<SignUpForm />
 				</div>
 
 				<div className="w-full h-full relative z-2">

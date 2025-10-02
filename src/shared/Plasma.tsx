@@ -8,6 +8,7 @@ interface PlasmaProps {
 	scale?: number
 	opacity?: number
 	mouseInteractive?: boolean
+	quality?: 'low' | 'medium' | 'high'
 }
 
 const hexToRgb = (hex: string): [number, number, number] => {
@@ -32,7 +33,7 @@ void main() {
 `
 
 const fragment = `#version 300 es
-precision highp float;
+precision mediump float;
 uniform vec2 iResolution;
 uniform float iTime;
 uniform vec3 uCustomColor;
@@ -43,6 +44,7 @@ uniform float uScale;
 uniform float uOpacity;
 uniform vec2 uMouse;
 uniform float uMouseInteractive;
+uniform float uMaxIterations;
 out vec4 fragColor;
 
 void mainImage(out vec4 o, vec2 C) {
@@ -55,7 +57,7 @@ void mainImage(out vec4 o, vec2 C) {
   float i, d, z, T = iTime * uSpeed * uDirection;
   vec3 O, p, S;
 
-  for (vec2 r = iResolution.xy, Q; ++i < 60.; O += o.w/d*o.xyz) {
+  for (vec2 r = iResolution.xy, Q; ++i < uMaxIterations; O += o.w/d*o.xyz) {
     p = z*normalize(vec3(C-.5*r,r.y)); 
     p.z -= 4.; 
     S = p;
@@ -65,6 +67,9 @@ void mainImage(out vec4 o, vec2 C) {
     Q = p.xz *= mat2(cos(p.y+vec4(0,11,33,0)-T)); 
     z+= d = abs(sqrt(length(Q*Q)) - .25*(5.+S.y))/3.+8e-4; 
     o = 1.+sin(S.y+p.z*.5+S.z-length(S-p)+vec4(2,1,0,8));
+    
+    // Ранний выход для оптимизации на низком качестве
+    if (uMaxIterations < 50.0 && length(O) > 0.8) break;
   }
   
   o.xyz = tanh(O/1e4);
@@ -99,16 +104,26 @@ export const Plasma: React.FC<PlasmaProps> = ({
 	scale = 1,
 	opacity = 1,
 	mouseInteractive = true,
+	quality = 'medium',
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const mousePos = useRef({ x: 0, y: 0 })
 	const isInitialized = useRef(false)
+	const isVisibleRef = useRef(true)
 
 	useEffect(() => {
-		if (!containerRef.current || isInitialized.current) return
+		// Настройки качества
+		const qualitySettings = {
+			low: { iterations: 40, maxDPR: 1, maxSize: 1440 },
+			medium: { iterations: 55, maxDPR: 1.5, maxSize: 1920 },
+			high: { iterations: 60, maxDPR: 2, maxSize: 3840 },
+		}
+		const settings = qualitySettings[quality]
+		const container = containerRef.current
+		if (!container) return
 
 		// Очищаем контейнер от предыдущих canvas
-		containerRef.current.innerHTML = ''
+		container.innerHTML = ''
 		isInitialized.current = true
 
 		const useCustomColor = color ? 1.0 : 0.0
@@ -120,14 +135,14 @@ export const Plasma: React.FC<PlasmaProps> = ({
 			webgl: 2,
 			alpha: true,
 			antialias: false,
-			dpr: Math.min(window.devicePixelRatio || 1, 2),
+			dpr: Math.min(window.devicePixelRatio || 1, settings.maxDPR),
 		})
 		const gl = renderer.gl
 		const canvas = gl.canvas as HTMLCanvasElement
 		canvas.style.display = 'block'
 		canvas.style.width = '100%'
 		canvas.style.height = '100%'
-		containerRef.current.appendChild(canvas)
+		container.appendChild(canvas)
 
 		const geometry = new Triangle(gl)
 
@@ -145,6 +160,7 @@ export const Plasma: React.FC<PlasmaProps> = ({
 				uOpacity: { value: opacity },
 				uMouse: { value: new Float32Array([0, 0]) },
 				uMouseInteractive: { value: mouseInteractive ? 1.0 : 0.0 },
+				uMaxIterations: { value: settings.iterations },
 			},
 		})
 
@@ -152,7 +168,7 @@ export const Plasma: React.FC<PlasmaProps> = ({
 
 		const handleMouseMove = (e: MouseEvent) => {
 			if (!mouseInteractive) return
-			const rect = containerRef.current!.getBoundingClientRect()
+			const rect = container.getBoundingClientRect()
 			mousePos.current.x = e.clientX - rect.left
 			mousePos.current.y = e.clientY - rect.top
 			const mouseUniform = program.uniforms.uMouse.value as Float32Array
@@ -161,34 +177,54 @@ export const Plasma: React.FC<PlasmaProps> = ({
 		}
 
 		if (mouseInteractive) {
-			containerRef.current.addEventListener('mousemove', handleMouseMove)
+			container.addEventListener('mousemove', handleMouseMove)
 		}
 
 		const setSize = () => {
-			const rect = containerRef.current!.getBoundingClientRect()
-			const width = Math.max(1, Math.floor(rect.width))
-			const height = Math.max(1, Math.floor(rect.height))
+			const rect = container.getBoundingClientRect()
+			let width = Math.max(1, Math.floor(rect.width))
+			let height = Math.max(1, Math.floor(rect.height))
+
+			// Ограничиваем максимальный размер для производительности
+			const maxDimension = Math.max(width, height)
+			if (maxDimension > settings.maxSize) {
+				const scale = settings.maxSize / maxDimension
+				width = Math.floor(width * scale)
+				height = Math.floor(height * scale)
+			}
+
 			renderer.setSize(width, height)
 			const res = program.uniforms.iResolution.value as Float32Array
 			res[0] = gl.drawingBufferWidth
 			res[1] = gl.drawingBufferHeight
 		}
 
+		// Intersection Observer для оптимизации (НЕ блокирует рендеринг)
+		const intersectionObserver = new IntersectionObserver(
+			(entries) => {
+				isVisibleRef.current = entries[0].isIntersecting
+			},
+			{ threshold: 0.1 }
+		)
+		intersectionObserver.observe(container)
+
 		const ro = new ResizeObserver(setSize)
-		ro.observe(containerRef.current)
+		ro.observe(container)
 		setSize()
 
 		let raf = 0
 		const t0 = performance.now()
 		const loop = (t: number) => {
-			let timeValue = (t - t0) * 0.001
+			const timeValue = (t - t0) * 0.001
 
 			if (direction === 'pingpong') {
 				const cycle = Math.sin(timeValue * 0.5) * directionMultiplier
-				;(program.uniforms.uDirection as any).value = cycle
+				;(program.uniforms.uDirection as { value: number }).value = cycle
 			}
 
-			;(program.uniforms.iTime as any).value = timeValue
+			;(program.uniforms.iTime as { value: number }).value = timeValue
+
+			// Рендерим всегда, но можем добавить оптимизации позже
 			renderer.render({ scene: mesh })
 			raf = requestAnimationFrame(loop)
 		}
@@ -197,16 +233,15 @@ export const Plasma: React.FC<PlasmaProps> = ({
 		return () => {
 			cancelAnimationFrame(raf)
 			ro.disconnect()
-			if (mouseInteractive && containerRef.current) {
-				containerRef.current.removeEventListener('mousemove', handleMouseMove)
+			intersectionObserver.disconnect()
+			if (mouseInteractive) {
+				container.removeEventListener('mousemove', handleMouseMove)
 			}
 			// Очищаем весь контейнер
-			if (containerRef.current) {
-				containerRef.current.innerHTML = ''
-			}
+			container.innerHTML = ''
 			isInitialized.current = false
 		}
-	}, [color, speed, direction, scale, opacity, mouseInteractive])
+	}, [color, speed, direction, scale, opacity, mouseInteractive, quality])
 
 	return (
 		<div
