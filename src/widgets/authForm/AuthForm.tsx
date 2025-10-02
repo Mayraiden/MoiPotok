@@ -7,8 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { authSchema } from '@shared/schemas/auth.schema'
 import type { AuthFormData } from '@shared/schemas/auth.schema'
 
-import { IInput } from '@shared/ui/input'
-import { IButton } from '@shared/ui/button'
+import { IInput } from '@shared/ui/Input'
+import { IButton } from '@shared/ui/Button'
 
 export const AuthForm = () => {
 	const { signIn, isLoading } = useAuthStore()
@@ -16,7 +16,7 @@ export const AuthForm = () => {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting },
+		formState: { errors },
 	} = useForm<AuthFormData>({
 		resolver: zodResolver(authSchema),
 		defaultValues: {
@@ -50,7 +50,6 @@ export const AuthForm = () => {
 				className="w-1/4 h-10 px-1 py-4 outline-0 border-b-1 border-white/70 active invalid:text-pink-600"
 				type="email"
 				placeholder="введите email"
-				onChange={() => {}}
 			/>
 			{errors.email && (
 				<span className="text-red-500 text-base">{errors.email.message}</span>
@@ -60,7 +59,6 @@ export const AuthForm = () => {
 				className="w-1/4 h-10 px-1 py-4 outline-0 border-b-1 border-white/70 invalid:text-pink-600"
 				type="password"
 				placeholder="введите пароль"
-				onChange={() => {}}
 			/>
 			<IButton
 				className="w-50 h-10 p-2 bg-indigo-600 rounded-2xl cursor-pointer hover:bg-indigo-700 transition-colors"

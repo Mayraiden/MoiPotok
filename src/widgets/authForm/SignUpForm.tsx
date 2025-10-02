@@ -8,8 +8,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { signUpSchema } from '@shared/schemas/auth.schema'
 import type { SignUpFormData } from '@shared/schemas/auth.schema'
 
-import { IInput } from '@shared/ui/input'
-import { IButton } from '@shared/ui/button'
+import { IInput } from '@shared/ui/Input'
+import { IButton } from '@shared/ui/Button'
 
 export const SignUpForm = () => {
 	const { signUp, isLoading } = useAuthStore()
@@ -18,7 +18,7 @@ export const SignUpForm = () => {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting },
+		formState: { errors },
 	} = useForm<SignUpFormData>({
 		resolver: zodResolver(signUpSchema),
 		defaultValues: {
@@ -135,5 +135,3 @@ export const SignUpForm = () => {
 		</form>
 	)
 }
-
-

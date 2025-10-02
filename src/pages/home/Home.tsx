@@ -1,5 +1,4 @@
 import { Navigation } from '../../widgets/navigatoin/ui/Navigation'
-import Plasma from '../../shared/Plasma'
 import Silk from '@shared/Silk'
 import { Link } from '@tanstack/react-router'
 
