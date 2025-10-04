@@ -1,69 +1,50 @@
-# React + TypeScript + Vite
+🎯 Challenge Tracker
+Challenge Tracker — SPA-приложение для отслеживания личных вызовов и привычек. Помогает не сдаваться и идти к целям с мотивацией и визуальным прогрессом.
+Создано с использованием современного стека: React, TypeScript, Zustand, TailwindCSS и архитектуры FSD.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+🚀 Функциональность
+✅ Создание челленджей — придумай любой вызов: "10 приседаний в день", "читать 30 минут", "не есть сладкое" и т.д.
+📅 Интерактивный календарь — отмечай дни, когда ты выполнил челлендж
+📊 Статистика и графики — следи за прогрессом и мотивируй себя
+👥 Командные вызовы — проходи челленджи вместе с друзьями с общим прогрессом
+🧠 Мотивация — streaks, визуальные индикаторы, прогресс-бары
+📝 Описание и настройка — добавляй детали к каждому вызову: название, описание, количество дней
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+🛠️ Технологии
+React / TypeScript — надёжный и типизированный фронтенд
+Zustand — лёгкое и удобное управление состоянием
+FSD (Feature-Sliced Design) — масштабируемая архитектура
+TailwindCSS — адаптивный и чистый UI
+Framer Motion — плавные анимации и переходы
+react-calendar — кастомный календарь с логикой
+reCharts — графики и визуализация прогресса
+react-hook-form + zod — валидация форм
+Vite — быстрая сборка
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+📌 Архитектура
+Проект построен по архитектуре Feature-Sliced Design, что позволяет:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Легко масштабировать приложение
+2. Разделять ответственность
+3. Поддерживать чистый и понятный код
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+📈 Статус
+✅ Основной функционал реализован
+🔄 В разработке: улучшение UI, добавление новых фич
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+🧪 Тестирование
+В планах: unit-тесты, e2e-тесты, нагрузочное тестирование
+
+---
+
+🚀 Демка доступна на Vercel - https://moi-potok.vercel.app/
