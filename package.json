@@ -16,6 +16,7 @@
 		"@react-three/fiber": "^9.3.0",
 		"@supabase/supabase-js": "^2.58.0",
 		"@tailwindcss/vite": "^4.1.13",
+		"@tanstack/react-query": "^5.90.2",
 		"@tanstack/react-router": "^1.131.48",
 		"@tanstack/router-devtools": "^1.131.48",
 		"ogl": "^1.0.11",

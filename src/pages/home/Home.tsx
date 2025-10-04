@@ -1,15 +1,6 @@
 import { Navigation } from '../../widgets/navigatoin/ui/Navigation'
-import Silk from '@shared/Silk'
+import Silk from '@shared/ui/Silk'
 import { Link } from '@tanstack/react-router'
-
-// <Plasma
-// 	color="#0460ff"
-// 	speed={0.7}
-// 	direction="forward"
-// 	scale={1.2}
-// 	opacity={1}
-// 	mouseInteractive={false}
-// />
 
 export const Home = () => {
 	return (

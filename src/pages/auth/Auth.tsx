@@ -1,5 +1,5 @@
-import DarkVeil from '../shared/DarkVeils'
-import { AuthForm } from '@widgets/authForm/AuthForm'
+import DarkVeil from '@shared/ui/DarkVeils'
+import { AuthForm } from '@features/auth/ui/AuthForm'
 
 export const Auth = () => {
 	return (

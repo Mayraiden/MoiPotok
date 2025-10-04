@@ -6,5 +6,5 @@ type IButtonProps = {
 	onClick?: () => void
 }
 export const IButton = ({ ...props }: IButtonProps) => {
-	return <button className={props.className}>{props.text}</button>
+	return <button {...props}>{props.text}</button>
 }
