@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { authSchema } from '@shared/schemas/auth.schema'
 import type { AuthFormData } from '@shared/schemas/auth.schema'
+import { Loader } from '@shared/ui/Loader'
 
 type IAuthFormType = {
 	mode?: 'login' | 'register'
@@ -15,6 +16,8 @@ type IAuthFormType = {
 export const AuthForm = ({ mode: initialMode = 'login' }: IAuthFormType) => {
 	const [mode, setMode] = useState<'login' | 'register'>(initialMode)
 	const { loginMutation, registerMutation } = useAuth()
+
+	const isLoading = loginMutation.isPending || registerMutation.isPending
 
 	const {
 		register,
@@ -37,7 +40,7 @@ export const AuthForm = ({ mode: initialMode = 'login' }: IAuthFormType) => {
 	}
 
 	return (
-		<div className="w-full h-full p-10 flex gap-4 flex-col justify-center items-center rounded-2xl backdrop-blur-2xl">
+		<div className="w-full h-full relative p-10 flex gap-4 flex-col justify-center items-center rounded-2xl backdrop-blur-2xl">
 			{/* Переключатель режимов */}
 			<div className="flex gap-2 mb-4">
 				<button
@@ -65,12 +68,12 @@ export const AuthForm = ({ mode: initialMode = 'login' }: IAuthFormType) => {
 			</div>
 
 			<form
-				className="w-full flex gap-4 flex-col justify-center items-center"
+				className="w-full flex gap-4 flex-col justify-center items-center text-white"
 				onSubmit={handleSubmit(onSubmit)}
 			>
 				<IInput
 					{...register('email')}
-					className="w-1/4 h-10 px-1 py-4 outline-0 border-b-1 border-white/70 active invalid:text-pink-600"
+					className="w-1/4 h-10 px-1 py-4 outline-0 active invalid:text-pink-600"
 					type="email"
 					placeholder="введите email"
 				/>
@@ -80,9 +83,10 @@ export const AuthForm = ({ mode: initialMode = 'login' }: IAuthFormType) => {
 
 				<IInput
 					{...register('password')}
-					className="w-1/4 h-10 px-1 py-4 outline-0 border-b-1 border-white/70 invalid:text-pink-600"
+					className="w-1/4 h-10 px-1 py-4 outline-0 invalid:text-pink-600"
 					type="password"
 					placeholder="введите пароль"
+					autoComplete="new-password"
 				/>
 				{errors.password && (
 					<span className="text-pink-600 text-sm">
@@ -97,6 +101,7 @@ export const AuthForm = ({ mode: initialMode = 'login' }: IAuthFormType) => {
 					disabled={loginMutation.isPending || registerMutation.isPending}
 				/>
 			</form>
+			<Loader isVisible={isLoading} />
 		</div>
 	)
 }

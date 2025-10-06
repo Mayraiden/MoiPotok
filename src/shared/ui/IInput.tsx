@@ -6,6 +6,11 @@ type IInputProps = {
 	className?: string
 } & React.InputHTMLAttributes<HTMLInputElement>
 
-export const IInput = (props: IInputProps) => {
-	return <input {...props} />
+export const IInput = ({ className, ...props }: IInputProps) => {
+	return (
+		<input
+			className={`px-3 bg-white/10 rounded-2xl backdrop-blur-md autofill:!text-white focus:outline-1 focus:outline-indigo-500 ${className}`}
+			{...props}
+		/>
+	)
 }

@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 export type IUserType = {
 	id: string
@@ -17,10 +18,17 @@ export type IAuthStoreType = {
 	setLoading: (v: boolean) => void
 }
 
-export const useAuthStore = create<IAuthStoreType>((set) => ({
-	user: null,
-	isLoading: false,
-	setUser: (user) => set({ user }),
-	clearUser: () => set({ user: null }),
-	setLoading: (v) => set({ isLoading: v }),
-}))
+export const useAuthStore = create<IAuthStoreType>()(
+	persist(
+		(set) => ({
+			user: null,
+			isLoading: false,
+			setUser: (user) => set({ user }),
+			clearUser: () => set({ user: null }),
+			setLoading: (v) => set({ isLoading: v }),
+		}),
+		{
+			name: 'auth-storage',
+		}
+	)
+)

@@ -21,6 +21,7 @@
 		"@tanstack/router-devtools": "^1.131.48",
 		"ogl": "^1.0.11",
 		"react": "^19.1.1",
+		"react-day-picker": "^9.11.0",
 		"react-dom": "^19.1.1",
 		"react-hook-form": "^7.63.0",
 		"tailwindcss": "^4.1.13",
