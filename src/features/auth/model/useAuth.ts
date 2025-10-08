@@ -59,7 +59,9 @@ export const useAuth = () => {
 			if (!user) throw new Error('Ошибка регистрации')
 			console.log('User registered:', user)
 
-			return user
+			await new Promise((resolve) => setTimeout(resolve, 1000))
+			const profile = await fetchUser(user.id)
+			return profile
 		},
 		onSuccess: (profile) => {
 			console.log('Registration success:', profile)
